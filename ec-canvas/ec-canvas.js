@@ -142,7 +142,7 @@ Component({
 
     initByNewWay(callback) {
       // version >= 2.9.0：使用新的方式初始化
-      const query = wx.createSelectorQuery().in(this)
+      const query = this.createSelectorQuery()
       query
         .select('.ec-canvas')
         .fields({ node: true, size: true })
@@ -218,15 +218,15 @@ Component({
         var touch = e.touches[0];
         var handler = this.chart.getZr().handler;
         handler.dispatch('mousedown', {
-          zrX: touch.x,
-          zrY: touch.y,
+          zrX: touch.x || touch.clientX,
+          zrY: touch.y || touch.clientY,
           preventDefault: () => {},
           stopImmediatePropagation: () => {},
           stopPropagation: () => {}
         });
         handler.dispatch('mousemove', {
-          zrX: touch.x,
-          zrY: touch.y,
+          zrX: touch.x || touch.clientX,
+          zrY: touch.y || touch.clientY,
           preventDefault: () => {},
           stopImmediatePropagation: () => {},
           stopPropagation: () => {}
@@ -240,8 +240,8 @@ Component({
         var touch = e.touches[0];
         var handler = this.chart.getZr().handler;
         handler.dispatch('mousemove', {
-          zrX: touch.x,
-          zrY: touch.y,
+          zrX: touch.x || touch.clientX,
+          zrY: touch.y || touch.clientY,
           preventDefault: () => {},
           stopImmediatePropagation: () => {},
           stopPropagation: () => {}
@@ -255,15 +255,15 @@ Component({
         const touch = e.changedTouches ? e.changedTouches[0] : {};
         var handler = this.chart.getZr().handler;
         handler.dispatch('mouseup', {
-          zrX: touch.x,
-          zrY: touch.y,
+          zrX: touch.x || touch.clientX,
+          zrY: touch.y || touch.clientY,
           preventDefault: () => {},
           stopImmediatePropagation: () => {},
           stopPropagation: () => {}
         });
         handler.dispatch('click', {
-          zrX: touch.x,
-          zrY: touch.y,
+          zrX: touch.x || touch.clientX,
+          zrY: touch.y || touch.clientY,
           preventDefault: () => {},
           stopImmediatePropagation: () => {},
           stopPropagation: () => {}
@@ -277,8 +277,8 @@ Component({
 function wrapTouch(event) {
   for (let i = 0; i < event.touches.length; ++i) {
     const touch = event.touches[i];
-    touch.offsetX = touch.x;
-    touch.offsetY = touch.y;
+    touch.offsetX = touch.x || touch.clientX;
+    touch.offsetY = touch.y || touch.clientX;
   }
   return event;
 }
