@@ -80,6 +80,9 @@ Page({
     }, {
       id: 'loadImage',
       name: '加载图片'
+    },{
+      id: 'skyline',
+      name: 'skyline渲染'
     }]
   },
 

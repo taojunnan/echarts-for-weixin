@@ -1,0 +1,17 @@
+/**index.wxss**/
+ec-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.warp {
+  height: 100vh;
+}
+
+.gap {
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #817d7d;
+}

@@ -2,6 +2,8 @@ import WxCanvas from './wx-canvas';
 import * as echarts from './echarts';
 
 let ctx;
+// canvas 的位置信息 { top, left }
+let canvasRect = { left: 0, top: 0 }
 
 function compareVersion(v1, v2) {
   v1 = v1.split('.')
@@ -213,20 +215,42 @@ Component({
       }
     },
 
-    touchStart(e) {
+    // 计算获取 canvas 的位置信息
+    calculateCanvasRect() {
+      const version = wx.getSystemInfoSync().SDKVersion;
+      // 3.4.1 后skyline canvas点击直接返回了x,y坐标，不需要计算
+      // @see https://developers.weixin.qq.com/community/develop/doc/00068692e542f801935138cdb6b800?jumpto=comment&commentid=0002c0c26446e0519b51053ef6b0
+      const needCalculate = compareVersion(version, '3.4.1') < 0 && this.renderer === 'skyline';
+      if(!needCalculate) {
+        return
+      }
+
+      return new Promise(resolve => {
+        const query = this.createSelectorQuery()
+        query.select('.ec-canvas').boundingClientRect(({ left, top }) => {
+          canvasRect = { left, top }
+          
+          resolve()
+        }).exec()
+      })
+    },
+
+    async touchStart(e) {
+      await this.calculateCanvasRect()
+
       if (this.chart && e.touches.length > 0) {
         var touch = e.touches[0];
         var handler = this.chart.getZr().handler;
         handler.dispatch('mousedown', {
-          zrX: touch.x || touch.clientX,
-          zrY: touch.y || touch.clientY,
+          zrX: touch.x || touch.pageX - canvasRect.left,
+          zrY: touch.y || touch.pageY - canvasRect.top,
           preventDefault: () => {},
           stopImmediatePropagation: () => {},
           stopPropagation: () => {}
         });
         handler.dispatch('mousemove', {
-          zrX: touch.x || touch.clientX,
-          zrY: touch.y || touch.clientY,
+          zrX: touch.x || touch.pageX - canvasRect.left,
+          zrY: touch.y || touch.pageY - canvasRect.top,
           preventDefault: () => {},
           stopImmediatePropagation: () => {},
           stopPropagation: () => {}
@@ -240,8 +264,8 @@ Component({
         var touch = e.touches[0];
         var handler = this.chart.getZr().handler;
         handler.dispatch('mousemove', {
-          zrX: touch.x || touch.clientX,
-          zrY: touch.y || touch.clientY,
+          zrX: touch.x || touch.pageX - canvasRect.left,
+          zrY: touch.y || touch.pageY - canvasRect.top,
           preventDefault: () => {},
           stopImmediatePropagation: () => {},
           stopPropagation: () => {}
@@ -255,15 +279,15 @@ Component({
         const touch = e.changedTouches ? e.changedTouches[0] : {};
         var handler = this.chart.getZr().handler;
         handler.dispatch('mouseup', {
-          zrX: touch.x || touch.clientX,
-          zrY: touch.y || touch.clientY,
+          zrX: touch.x || touch.pageX - canvasRect.left,
+          zrY: touch.y || touch.pageY - canvasRect.top,
           preventDefault: () => {},
           stopImmediatePropagation: () => {},
           stopPropagation: () => {}
         });
         handler.dispatch('click', {
-          zrX: touch.x || touch.clientX,
-          zrY: touch.y || touch.clientY,
+          zrX: touch.x || touch.pageX - canvasRect.left,
+          zrY: touch.y || touch.pageY - canvasRect.top,
           preventDefault: () => {},
           stopImmediatePropagation: () => {},
           stopPropagation: () => {}
@@ -277,8 +301,8 @@ Component({
 function wrapTouch(event) {
   for (let i = 0; i < event.touches.length; ++i) {
     const touch = event.touches[i];
-    touch.offsetX = touch.x || touch.clientX;
-    touch.offsetY = touch.y || touch.clientX;
+    touch.offsetX = touch.x || touch.pageX - canvasRect.left;
+    touch.offsetY = touch.y || touch.pageY - canvasRect.top;
   }
   return event;
 }

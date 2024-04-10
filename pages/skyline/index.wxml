@@ -1,0 +1,6 @@
+<scroll-view type="custom" scroll-y="true" class="warp">
+  <view class="gap">
+    <text>占位内容，往上滑动↑</text>
+  </view>
+  <ec-canvas id="mychart-dom-pie" canvas-id="mychart-pie" ec="{{ ec }}"></ec-canvas>
+</scroll-view>

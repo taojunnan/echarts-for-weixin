@@ -24,7 +24,8 @@
     "pages/multiCharts/index",
     "pages/move/index",
     "pages/saveCanvas/index",
-    "pages/loadImage/index"
+    "pages/loadImage/index",
+    "pages/skyline/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -33,5 +34,11 @@
     "navigationBarTitleText": "ECharts 图表示例",
     "navigationBarTextStyle": "black"
   },
-  "sitemapLocation": "sitemap.json"
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "rendererOptions": {
+    "skyline": {
+      "defaultContentBox": true
+    }
+  }
 }
